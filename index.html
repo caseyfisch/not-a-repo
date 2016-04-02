@@ -105,7 +105,7 @@
             extremely computationally heavy. As a result, they are only used to  
             clone smaller regions (approximately 60,000 pixels). Speeding up the 
             implementation of the Poisson equation solver will allow us to process 
-            images faster, especially for larger images.</p>
+            images faster, especially for larger regions of interest.</p>
             
             <p>Once we have a parallel discrete Poisson equation solver, we can easily implement
             the seamless image cloning algorithm.  First we preprocess the input images,
@@ -115,8 +115,6 @@
             solver.  Finally, we blend the color channels of each pixel to obtain
             the final result.</p>
 
-            <p>Finish this section!!</p>
-            
             <p>Graphics source: <a href="#resources">"Poisson Image Editing"</a></p>
           </div>
         </div>
@@ -133,9 +131,10 @@
             experience working with computational photography algorithms, so we'll face a 
             significant initial investment learning about all the underlying machinery of 
             solving these systems of equations efficiently and implementing the algorithms.
-            One particular challenge we foresee is dividing the workload among CUDA threads, 
-            given the dependencies that seem to exist between the matrix rows and columns, 
-            as well as between iterations, in the natural iterative nature of most solvers. 
+            One particular challenge we foresee in attempting to parallelize a solver is 
+            dividing the workload among CUDA threads.  Given the dependencies that seem to 
+            exist between the matrix rows and columns, as well as between iterations, 
+            the iterative nature of most solvers may pose as a bottleneck. 
             Further, we anticipate that there will be some communication tradeoffs between 
             threads in this implementation if we divide the workload of each iteration among
             many different threads.</p>
