@@ -35,7 +35,7 @@
       <div class="section">
         <div class="row">
           <div class="col s12 m12">
-            <h3 class="header center">Parallel Poisson Equation Solver</h3>
+            <h3 class="header center">Parallel Discrete Poisson Equation Solver</h3>
             <h5 class="center">With Applications in Seamless Image Cloning</h5>
             <p class="center">Casey Fischer and Udaya Malik</p> 
           </div>
@@ -48,7 +48,7 @@
         <div class="row">
           <div class="col s12 m12">
             <h4>Summary</h4>
-            <p>We are going to implement a parallel Poisson Equation solver, to apply to seamless image cloning, in CUDA on the NVIDIA GPUs in the Gates clusters.</p>
+            <p>We are going to implement a parallel discrete Poisson equation solver, to apply to seamless image cloning, in CUDA on the NVIDIA GPUs in the Gates clusters.</p>
           </div>
         </div>
       </div>
@@ -68,11 +68,11 @@
             the image below.  The goal of <b>seamless image cloning</b> is to allow 
             foreground images to be seamlessly integrated into the background by 
             taking the gradients of the foreground and background images into account, 
-            creating a more natural looking composition.</p>
+            creating a more natural-looking composition.</p>
             
             <img class="responsive-img" src="./images/example2.png"/>
             <p>One common method for achieving realistic results is through a method 
-            called Poisson blending.  Given the image gradient of the foreground, we 
+            called <b>Poisson blending</b>.  Given the image gradient of the foreground, we 
             can determine the new value for a pixel in the background by finding a 
             value that minimizes the difference between the gradient of the new image
             and the gradient of the background.</p>
@@ -83,31 +83,41 @@
             used in Poisson blending, using the following notation: "An unknown 
             function <i>f</i> interpolates the domain Ω the destination function 
             <i>f*</i>, under guidance of vector field <b>v</b>, which might be or 
-            not the gradient field of a source function <i>g</i>."</p>
+            not the gradient field of a source function <i>g</i>."  In the context
+            of the seamless image cloning problem, we use the gradient of the 
+            foreground image as <b>v</b> to guide the computation to the new
+            pixel values in the Ω region in the background image.</p>
             
             <p>Finding the interpolant function <i>f</i> requires finding the solution 
-            to a minimzaiton problem, whose solution is the unique solution of a related 
-            Poisson equation with Dirichlet boundary counditions.
-            The solutions to these equations, described in 
-            <a href="#resources">"Poisson Image Editing,"</a> are the fundamental basis 
-            of Poisson image editing. Three Poisson equations are solved for each of 
+            to a minimization problem, whose solution is the unique solution of a related discrete
+            Poisson equation with Dirichlet boundary counditions. The solutions to these equations, 
+            described in <a href="#resources">"Poisson Image Editing,"</a> are the fundamental basis 
+            of Poisson image editing. Three systems of discrete Poisson equations are solved for each of 
             the color channels in each pixel.  This technique allows us to create 
             more believable composite images, like the one shown below.</p>
             
             <img class="responsive-img" src="./images/example3.png" />
 
-            <p>We plan to create a parallel implementation of a Poisson equation solver, 
-            which we plan to apply to the problem of seamless image cloning, and 
+            <p>We plan to create a parallel implementation of a discrete Poisson equation solver, 
+            which we can then apply to the problem of seamless image cloning, and 
             potentially other related algorithms. The algorithms commonly used to 
-            solve these equations are intrinsically iterative, and thus extremely 
-            computationally heavy. As a result, they are only used for smaller images 
-            (approximately 60,000 pixels). Speeding up the implementation of the 
-            Poisson equation solver will allow us to process images faster, 
-            especially for larger images.</p>
+            solve these systems of equations are intrinsically iterative, and thus 
+            extremely computationally heavy. As a result, they are only used to  
+            clone smaller regions (approximately 60,000 pixels). Speeding up the 
+            implementation of the Poisson equation solver will allow us to process 
+            images faster, especially for larger images.</p>
+            
+            <p>Once we have a parallel discrete Poisson equation solver, we can easily implement
+            the seamless image cloning algorithm.  First we preprocess the input images,
+            creating a mask to target a region in the foreground image, and a mask to 
+            indicate the destination region in the background image.  Then, we 
+            generate a sparse linear system to be solved by the discrete Poisson
+            solver.  Finally, we blend the color channels of each pixel to obtain
+            the final result.</p>
 
             <p>Finish this section!!</p>
             
-            <p>Image source: <a href="#resources">"Poisson Image Editing"</a></p>
+            <p>Graphics source: <a href="#resources">"Poisson Image Editing"</a></p>
           </div>
         </div>
       </div>
@@ -119,15 +129,17 @@
           <div class="col s12 m12">
             <h4>Challenges</h4>
             <p>Our initial and biggest challenge is understanding the algorithm and math 
-            behind the Poisson equation solver. Another challenge we foresee is dividing 
-            the workload among CUDA threads, depending upon the dependencies that exist 
-            between the matrix rows and columns, in an attempt to parallelize the solver. 
-            Another challenge we anticipate is dealing with necessary communication between 
-            threads in this implementation.</p>
-            
-            <p></p>
-            
-            <p></p>
+            behind the discrete Poisson equation solver.  Neither of us have any prior 
+            experience working with computational photography algorithms, so we'll face a 
+            significant initial investment learning about all the underlying machinery of 
+            solving these systems of equations efficiently and implementing the algorithms.
+            One particular challenge we foresee is dividing the workload among CUDA threads, 
+            given the dependencies that seem to exist between the matrix rows and columns, 
+            as well as between iterations, in the natural iterative nature of most solvers. 
+            Further, we anticipate that there will be some communication tradeoffs between 
+            threads in this implementation if we divide the workload of each iteration among
+            many different threads.</p>
+
           </div>
         </div>
       </div>
@@ -138,7 +150,7 @@
         <div class="row">
           <div class="col s12 m12">
             <h4>Resources</h4>
-            We plan to study and make use of the algorithms proposed in the following papers.
+            <p>We intend to use the GHC machines equipped with NVIDIA GPUs.  We plan to study and make use of the algorithms proposed in the following papers.</p>
             <ul class="collection">
               <li class="collection-item"><a class="light-blue-text text-lighten-1" href="https://www.cs.jhu.edu/~misha/Fall07/Papers/Perez03.pdf" target=blank>“Poisson Image Editing”</a> by Patrick Perez, Michael Gangnet, and Andrew Blake (2003)</li>
               <li class="collection-item"><a class="light-blue-text text-lighten-1" href="http://www.cs.columbia.edu/cg/pdfs/28_GPUSim.pdf" target=blank>"Sparse Matrix Solverson the GPU: Conjugate Gradients and Multigrid"</a> by Jeff Bolz, Ian Farmer, Eitan Grinspun, and Peter Schroder (2003)</li>
@@ -155,8 +167,8 @@
             <h4>Goals & Deliverables</h4>
             <p>We plan to achieve the following goals by the end of the project:</p>
             <ol>
-              <li>A competitive sequential implementation of a Poisson equation solver</li>
-              <li>A parallel implementaiton of a Poisson equation solver in CUDA</li>
+              <li>A competitive sequential implementation of a discrete Poisson equation solver</li>
+              <li>A parallel implementaiton of a discrete Poisson equation solver in CUDA</li>
               <li>An algorithm that applies our solver to seamless image cloning</li>
             </ol>
             
@@ -203,7 +215,7 @@
               <tbody>
                 <tr>
                   <td>Apr 1 - 8</td>
-                  <td>Research and implement serial version of Poisson equation solver</td>
+                  <td>Research and implement serial version of discrete Poisson equation solver</td>
                 </tr>
                 <tr>
                   <td>Apr 8 - 15</td>
