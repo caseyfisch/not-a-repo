@@ -69,13 +69,15 @@
             detecting matches between the input and the database to determine 
             which song you’re listening to.</p>
             
-            <h5>Analog to Digital</h5>
+            <h5>Capturing Audio Samples</h5>
             <p>Sounds are vibrations that propagate as mechanical waves of 
             pressure through a medium like air.  The pressure of a continuous 
             sound wave is detected and converted to an electrical signal,
             which is translated to an analog and then discrete digital signal.  
             We can collect these input signals using a Raspberry Pi 2 with a 
             JTAG board.</p>
+            
+            <a href="https://www.toptal.com/algorithms/shazam-it-music-processing-fingerprinting-and-recognition#analog-to-digital---sampling-a-signal" target="toptal"><img class="responsive-img center-block" src="images/adc.jpg"/></a>
             
             <h5>Comparing Input and Database Fingerprints</h5>
             <p>The digital signal is recorded in the time domain, which 
@@ -84,6 +86,8 @@
             the time domain to the frequency domain, which acts as a type of 
             fingerprint or signature for the signal.  The frequency domain gives
             us a more direct metric for comparison between two audio signals.</p>
+            
+            <a href="https://www.toptal.com/algorithms/shazam-it-music-processing-fingerprinting-and-recognition#time-domain-and-frequency-domain" target="toptal"><img class="responsive-img center-block" src="images/t2f.jpg"></a>
 
             <p>While the frequency domain is a more convenient representation of
             the input audio signal, it causes us to lose timing information that
@@ -105,6 +109,9 @@
             fingerprint match within segments of the song.  By parallelizing 
             along these axes, we think that we will be able to process the 
             input audio signals fast enough to create a real-time system.</p>
+            
+            <a href="https://www.toptal.com/algorithms/shazam-it-music-processing-fingerprinting-and-recognition#from-top-to-bottom" target="toptal"><img class="responsive-img center-block" src="images/pipeline.jpg"></a>
+
           </div>
         </div>
       </div>
@@ -206,7 +213,11 @@
             <p>We plan on testing our audio recognition program on one of the 
             GHC machines, as well as the ECE cluster machines. Essentially, 
             we’ll be testing our project through a Linux platform on a
-            Raspberry Pi 2, along with a JTAG.  We plan to use C as the programming 
+            Raspberry Pi 2, along with a JTAG.  However, we might test to see
+            how well we can implement audio sampling with just the microphones
+            on our Macbooks.</p>
+            
+            <p>We plan to use C as the programming 
             language, as we deal with a lot of low-level architecture of 
             receiving raw data samples. Therefore, to implement parallelism, 
             we plan to use multi-threading via the Pthread library.</p>
