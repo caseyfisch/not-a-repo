@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Kazam!</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+<body>
+  <header>
+    <nav class="blue lighten-1" role="navigation">
+      <div class="nav-wrapper container"><a id="logo-container" href="./index.html" class="brand-logo">15-418 Final Project</a>
+        <ul class="right hide-on-med-and-down">
+          <li class="active"><a href="#">Proposal</a></li>
+          <li><a href="./index.html">Check Point</a></li>
+          <!--<li><a href="#">Final Write-Up</a></li>-->
+        </ul>
+  
+        <ul id="nav-mobile" class="side-nav">
+          <li class="active"><a href="#">Proposal</a></li>
+          <li><a href="./index.html">Check Point</a></li>
+          <!--<li><a href="#">Final Write-Up</a></li>-->
+        </ul>
+        <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    
+    <div class="container">
+      <div class="section">
+        <div class="row">
+          <div class="col s12 m12">
+            <h3 class="header center">Kazam!</h3>
+            <h5 class="center">Parallel Audio Recognition</h5>
+            <h5 class="center">Project Proposal</h5>
+            <p class="center">Casey Fischer and Udaya Malik</p> 
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="summary" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Summary</h4>
+            <p>We are going to implement a simplified, real-time music recognition algorithm 
+            on a Raspberry Pi 2 with a JTAG chip.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="background" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Background</h4>
+            <p>Real-time music recognition technologies, such as 
+            <a href="http://www.shazam.com/" target=blank>Shazam</a>, 
+            are able to capture streams of audio and recognize the song that’s 
+            playing, almost instantaneously.  The general algorithm for audio 
+            recognition involves creating a digital fingerprint of the input 
+            audio, comparing it against a database of song fingerprints, and 
+            detecting matches between the input and the database to determine 
+            which song you’re listening to.</p>
+            
+            <h5>Capturing Audio Samples</h5>
+            <p>Sounds are vibrations that propagate as mechanical waves of 
+            pressure through a medium like air.  The pressure of a continuous 
+            sound wave is detected and converted to an electrical signal,
+            which is translated to an analog and then discrete digital signal.  
+            We can collect these input signals using a Raspberry Pi 2 with a 
+            JTAG board.</p>
+            
+            <a href="https://www.toptal.com/algorithms/shazam-it-music-processing-fingerprinting-and-recognition#analog-to-digital---sampling-a-signal" target="toptal"><img class="responsive-img center-block" src="images/adc.jpg"/></a>
+            
+            <h5>Comparing Input and Database Fingerprints</h5>
+            <p>The digital signal is recorded in the time domain, which 
+            represents the changes in amplitude of the signal over time.  Using 
+            a Fast Fourier Transform algorithm, the signal is transformed from 
+            the time domain to the frequency domain, which acts as a type of 
+            fingerprint or signature for the signal.  The frequency domain gives
+            us a more direct metric for comparison between two audio signals.</p>
+            
+            <a href="https://www.toptal.com/algorithms/shazam-it-music-processing-fingerprinting-and-recognition#time-domain-and-frequency-domain" target="toptal"><img class="responsive-img center-block" src="images/t2f.jpg"></a>
+
+            <p>While the frequency domain is a more convenient representation of
+            the input audio signal, it causes us to lose timing information that
+            is critical to determining where the audio occurs in a song.  To 
+            mitigate this problem, we can create fingerprints for small, discrete
+            chunks of the input stream, and compare these digital fingerprints 
+            with chunks of songs in the database.  By analyzing the peak 
+            frequencies that occur in each chunk, we can determine which song a 
+            particular input fingerprint might belong to.  We also need to 
+            analyze the relative time at which the signal occurs in a song to 
+            determine which song is actually playing, in the case that the 
+            frequency domain samples match to multiple songs in our database.</p>
+            
+            <h5>Opportunities for Parallelism</h5>
+            <p>There are two primary opportunities for parallelism in this 
+            algorithm.  First and foremost, we can parallelize the search for 
+            an input digital fingerprint among all the songs in our library.  
+            Secondly, within each song, we can parallelize the search for a 
+            fingerprint match within segments of the song.  By parallelizing 
+            along these axes, we think that we will be able to process the 
+            input audio signals fast enough to create a real-time system.</p>
+            
+            <a href="https://www.toptal.com/algorithms/shazam-it-music-processing-fingerprinting-and-recognition#from-top-to-bottom" target="toptal"><img class="responsive-img center-block" src="images/pipeline.jpg"></a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="challenges" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Challenges</h4>
+            <p>There are several challenges we anticipate in parallelizing this
+            audio recognition algorithm.</p>
+            <ol>
+              <li><b>Real-time Data Collection: </b>We need to be able to sample 
+              the input audio stream at a fast enough rate to generate results
+              almost instanteously, but we also need to be able to process those
+              samples at a similar rate to avoid missing signals or building up 
+              an extensive work queue.</li>
+              <li><b>Memory Constraints: </b>To achieve real-time results, we need 
+              to be able to store and process a large number of audio samples
+              per second, which could require a large amount of memory at any 
+              given time.  The database of songs (and their fingerprints) could
+              pose as a problem, especially on the Raspberry Pi, which only has
+              1 GB RAM.</li>
+              <li><b>Communication Overhead: </b>When parallelizing across songs, 
+              we need to coordinate communication between the threads when 
+              reporting partial results of sample matches for each song to a
+              master thread.</li>
+              <li><b>Correctness: </b>Finally, we have to consider how to track
+              potential fingerprint matches among each threads, especially the case
+              where a fingerprint might match to multiple parts of a song, but 
+              may not match for subsequent input fingerprints.</li>
+            </ol>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="resources" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Resources</h4>
+            <p>This project is essentially an expansion of one of the labs from 
+            the course Real-Time Embedded Systems (18-349 - The Guitar Tuner Lab), 
+            from Fall 2015. We plan to use the Fast Fourier Transform library 
+            from this lab to process audio samples.</p>
+            
+            <p>In addition, we have so far made use of the following resources 
+            for research and information about music recognition and Shazam's 
+            algorithm.</p>
+            <ol>
+              <li><a href="http://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf" target=blank>"An Industrial-Strength Audio Search Algorithm"</a> by Avery Wang (2003) </li>
+              
+              <li><a href="https://www.toptal.com/algorithms/shazam-it-music-processing-fingerprinting-and-recognition" target=blank>"Shazam It! Music Recognition Algorithms, Fingerprinting, and Processing"</a> by Jovan Jovanovic</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="goals" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Goals & Deliverables</h4>
+            <p>We plan to achieve the following goals by the end of the project:</p>
+            <ol>
+              <li>A competitive, sequential implementation of the audio recognition algorithm</li>
+              <li>A parallel implementation of the audio recognition algorithm.  We think we can 
+              achieve significant speedup to create a feasible, real-time system.</li>
+            </ol>
+            
+            <p>We hope to achieve the following stretch goals:</p>
+            <ol>
+              <li>An implementation that leverages data compression to 
+              mitigate some of the memory constraints</li>
+              <li>A parallel implementation of the Fast Fourier Transform
+              for further performance gains</li>
+            </ol>
+            
+            <p>At the project's end, we plan to be able to show:</p>
+            <ol>
+              <li>An analysis of the performance between our sequential and
+              parallel implementations through various stress tests</li>
+              <li>Maybe a live demo!</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="platform" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Platform Choice</h4>
+            <p>We plan on testing our audio recognition program on one of the 
+            GHC machines, as well as the ECE cluster machines. Essentially, 
+            we’ll be testing our project through a Linux platform on a
+            Raspberry Pi 2, along with a JTAG.  However, we might test to see
+            how well we can implement audio sampling with just the microphones
+            on our Macbooks.</p>
+            
+            <p>We plan to use C as the programming 
+            language, as we deal with a lot of low-level architecture of 
+            receiving raw data samples. Therefore, to implement parallelism, 
+            we plan to use multi-threading via the Pthread library.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="schedule" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Schedule</h4>
+            <table class="highlight">
+              <thead>
+                <tr>
+                  <th data-field="week">Week</th>
+                  <th data-field="plans">Plans</th>
+                </tr>
+              </thead>
+      
+              <tbody>
+                <tr>
+                  <td>Apr 1 - 8</td>
+                  <td>(Change project idea and re-do proposal)</td>
+                </tr>
+                <tr>
+                  <td>Apr 8 - 15</td>
+                  <td>Research and implement a sequential version of Shazam</td>
+                </tr>
+                <tr>
+                  <td>Apr 15 - 22</td>
+                  <td>Implement the parallel version, using songs as our axis of parallelism</td>
+                </tr>
+                <tr>
+                  <td>Apr 22 - 29</td>
+                  <td>Debug and refine.  Analyze performance of algorithms.</td>
+                </tr>
+                <tr>
+                  <td>Apr 29 - May 5</td>
+                  <td>Time permitting, complete stretch goals</td>
+                </tr>
+                <tr>
+                  <td>May 5 - 9</td>
+                  <td>Finalize presentation and write-up</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="page-footer blue darken-2">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">15-418 Final Project</h5>
+          <h6 class="white-text">Kazam: Parallel Audio Recognition</h6>
+          <ul>
+            <li class="white-text">Casey Fischer (cjfische)</li>
+            <li class="white-text">Udaya Malik (umalik)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      Made by <a class="orange-text text-lighten-3" href="http://materializecss.com" target=blank>Materialize</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="js/init.js"></script>
+
+  </body>
+</html>
