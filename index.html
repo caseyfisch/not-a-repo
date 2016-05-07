@@ -15,14 +15,14 @@
       <div class="nav-wrapper container"><a id="logo-container" href="./index.html" class="brand-logo">15-418 Final Project</a>
         <ul class="right hide-on-med-and-down">
           <li><a href="./proposal.html">Proposal</a></li>
-          <li class="active"><a href="#">Check Point</a></li>
-          <!--<li><a href="#">Final Write-Up</a></li>-->
+          <li><a href="./checkpoint.html">Check Point</a></li>
+          <li class="active"><a href="#">Final Write-Up</a></li>
         </ul>
   
         <ul id="nav-mobile" class="side-nav">
           <li><a href="./proposal.html">Proposal</a></li>
-          <li class="active"><a href="#">Check Point</a></li>
-          <!--<li><a href="#">Final Write-Up</a></li>-->
+          <li><a href="./checkpoint.html">Check Point</a></li>
+          <li class="active"><a href="#">Final Write-Up</a></li>
         </ul>
         <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
       </div>
@@ -37,7 +37,7 @@
           <div class="col s12 m12">
             <h3 class="header center">Kazam!</h3>
             <h5 class="center">Parallel Audio Recognition</h5>
-            <h5 class="center">Project Check Point</h5>
+            <h5 class="center">Final Thoughts & Results</h5>
             <p class="center">Casey Fischer and Udaya Malik</p> 
           </div>
         </div>
@@ -48,140 +48,15 @@
       <div id="checkpoint" class="section scrollspy">
         <div class="row">
           <div class="col s12 m12">
-            <h4>Work Accomplished So Far</h4>
+            <h4>Under Construction</h4>
             <p>
-            The first week of April, we spent time researching our previous project idea,
-            and after meeting with Karima, we settled on our current idea of Parallel Shazam.</p>
+            We're still hacking away on our project... Sorry, check back later!</p>
             
-            <p>
-            From April 10 onward, we’ve done extensive research on audio fingerprinting, 
-            including reading the <a href="http://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf" target=blank>white paper</a> published by one of Shazam’s founders.  
-            From this research, we’ve come up with and evaluated several algorithms, while
-            attemping to implement them.</p> 
-
-            <p>
-            Our first approach was to follow the algorithm proposed in the Shazam paper, 
-            which collects the live audio sample, constructs a spectrogram of the audio 
-            input (a graph that represents how the frequency of the input changes with time, 
-            and also indicates the amplitude of those frequencies at a given time), 
-            extract frequency-time pairs from the spectrogram that are seemingly unique
-            to the input audio, and then use those pairs as hashes to compare with songs
-            in the database that have also been transformed in the same manner.  We spent 
-            a fair amount of time trying to understand how to construct a spectrogram in C/C++, 
-            but we were unable to find a method suitable for the languages (most people 
-            use Matlab or other higher level languages). </p>
-            
-            <p>
-            Our second (and current) algorithm is a modification of the first.  We collect 
-            the input audio sample in chunks, transform each chunk to the frequency domain, 
-            and then use some of the most prominent frequencies that occur during the chunk 
-            to compare with prominent frequencies in the songs in our database, with a “sliding 
-            window” technique.  This seems like the most viable algorithm, and it still presents
-            the same opportunities for parallelism that we discussed in our proposal.  We may 
-            also be able to use this technique to construct a low-resolution spectrogram, 
-            which would allow us to use some of the same techniques described in the white paper 
-            for better speed and performance.</p>
           </div>
         </div>
       </div>
     </div>
     
-    <div class="container">
-      <div id="goals" class="section scrollspy">
-        <div class="row">
-          <div class="col s12 m12">
-            <h4>Goals & Deliverables: Revisited</h4>
-            <p>
-            We’re slightly behind our original schedule due to some unexpected complications
-            with our Raspberry Pi and JTAG.  We’re working to make sure that we’ll be able 
-            to collect audio input through the JTAG, but our backup is collecting audio samples 
-            through the Mac microphone itself. This would be challenging as our current starter 
-            code wouldn’t work with this set up, requiring us to come up with a new implementation.
-            </p>
-            
-            <p>
-            We still think we can meet our original goals of implenting a sequential and parallel
-            version of the algorithm, with a comparison and analysis of the performance of the 
-            parallel implementation of the algorithm against the sequential one.  However,
-            we're unsure that, in the time remaining, we'll be able to implement our stretch goals.</p>
-            
-            <p>
-            For our final presentation, we still plan to be able to demonstrate a working version of Kazam,
-            in a simplified environment.  This includes our version being able to recognize a song, 
-            with little background noise, against a decently-sized database of songs. Our plan in the mean time is to 
-            start out with a small database of songs (~15 songs), and then work our way up from there. </p>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="container">
-      <div id="concerns" class="section scrollspy">
-        <div class="row">
-          <div class="col s12 m12">
-            <h4>Concerns</h4>
-            <p>Currently, our primary concern is getting the hardware to function 
-            so we can use our starter code to collect audio.  Otherwise, we’ll have 
-            to spend time learning how to do so through Mac OS X development, or maybe 
-            switch to a different language, like Java, that has built-in classes for 
-            processing audio streams.</p>
-
-            <p>We’re also concerned with the best way to populate our database of songs.  
-            It’s not practical to record a library of thousands of songs through the JTAG, 
-            but at this time, we don’t know how to read in audio files through C (or Java) 
-            to transform them accordingly.  This requires some investigation on our part.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="container">
-      <div id="schedule" class="section scrollspy">
-        <div class="row">
-          <div class="col s12 m12">
-            <h4>Revised Schedule</h4>
-            <table class="highlight">
-              <thead>
-                <tr>
-                  <th data-field="week">Week (Halves)</th>
-                  <th data-field="plans">Plans</th>
-                </tr>
-              </thead>
-      
-              <tbody>
-                <tr>
-                  <td>Apr 19 - 22</td>
-                  <td>Finish sequential implementation <br />(We have FFT output, but need 
-                  to transform the frequency data into a usable representation for 
-                  matching and comparison)</td>
-                </tr>
-                <tr>
-                  <td>Apr 23 - 25</td>
-                  <td>Start on parallel implementation <br />(Process sample chunks concurrently)</td>
-                </tr>
-                <tr>
-                  <td>Apr 26 - 29</td>
-                  <td>Continue parallel implementation <br />(Search through database files in parallel)</td>
-                </tr>
-                <tr>
-                  <td>Apr 30 - May 2</td>
-                  <td>Finish implementation and debug</td>
-                </tr>
-                <tr>
-                  <td>May 3 - 6</td>
-                  <td>Test and scale with database size<br />Time-permitting, complete stretch goals</td>
-                </tr>
-                <tr>
-                  <td>May 7 - 9</td>
-                  <td>Prepar presentation and write-up</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
   </main>
 
   <footer class="page-footer blue darken-2">
