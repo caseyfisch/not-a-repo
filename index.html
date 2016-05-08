@@ -71,8 +71,8 @@
             paper published by one of Shazam's co-founders, as well as eliminating
             the constraint to process captured audio in real time.  Doing so allowed
             us to explore how much we could optimize the search process with a 
-            unique audio fingerprinting approach.  We used threads and SIMD 
-            execution to speed up our algorithm, running on our GHC50, and 
+            unique audio fingerprinting approach.  We used OpenMP to attempt to 
+            speed up our algorithm, running on our GHC 45, and 
             analyzed performance with a variable number of
             threads, as well as varying sizes for our database of songs.</p>
           </div>
@@ -178,7 +178,8 @@
             following chart shows a sample of songs of varying lengths, and 
             the amount of time in milliseconds it took to compare it with
             every song in the database (held at a constant size of 40 songs in 
-            this case).</p>
+            this case).  This implementation featured no break early mechanism,
+            so the entirety of each song was scanned and compared.</p>
             
             <img class="responsive-img center-block" src="./images/svp-compare-query.png"/>
             
