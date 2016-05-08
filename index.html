@@ -50,7 +50,8 @@
           <div class="col s12 m12">
             <h4>Under Construction</h4>
             <p>
-            We're still hacking away on our project... Sorry, check back later!</p>
+            We're still hacking away on our project and collecting results. 
+            Check back later for a more thorough writeup!</p>
             
           </div>
         </div>
@@ -85,6 +86,21 @@
         <div class="row">
           <div class="col s12 m12">
             <h4>Background</h4>
+            <p>Audio fingerprinting is a process that translates audio signals into
+            a digital summary of the audio sample, usually by transforming the 
+            analog, continuous signal in the time domain to a digital, discrete 
+            representation of the signal in the frequency domain.  If two audio samples
+            sound the same to the human ear, then their audio fingerprints should
+            be the same as well.  Audio fingerprints are analogous to human fingerprints,
+            in the sense that they should retain some of their unique characteristics,
+            even in the presence of noise or distortion.  Thus, by comparing the 
+            audio fingerprints of two samples, we can determine whether or not
+            they correspond to the same original audio.  However, we can't just 
+            compare the raw audio data.  Just because two audio signals sound the same,
+            doesn't mean that they'll necessarily have the same digital binary 
+            representation.  This is the primary motivation behind creating 
+            audio fingerprints.</p>
+            
             <p>Shazam developed a clever algorithm to robustly and efficiently
             identify captured audio, in real time, by creating an audio fingerprint 
             of the input audio signal, and comparing that fingerprint with
@@ -191,6 +207,10 @@
             hypothesized that if we increase the database size, then we would see 
             more benefits from the parallelized implementation over the sequential 
             version.  </p>
+            
+            <img src=""/>
+            
+            However, as the above graph shows, our prediction was incorrect.  
           </div>
         </div>
       </div>
