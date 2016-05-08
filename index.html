@@ -202,7 +202,8 @@
             <p>As you can see in the chart, the parallel implementation actually 
             performs marginally worse in all cases than the sequential version.
             We believe this is due to the overhead of spawning threads and using
-            them on such a small database.  The search process is very IO intensive,
+            them on such a small database, as well as servicing only one query,
+            despite loading the entire database.  The search process is very IO intensive,
             given that we have to read in each database file for comparison.  We
             hypothesized that if we increase the database size, then we would see 
             more benefits from the parallelized implementation over the sequential 
@@ -210,7 +211,20 @@
             
             <img src=""/>
             
-            However, as the above graph shows, our prediction was incorrect.  
+            However, as the above graph shows, our prediction was incorrect.  We see 
+            that as the size of the database grows, the performance of the parallel 
+            implementation is about the same or worse as the performance of the 
+            sequential version.  At this point, we realized that our implementation 
+            is definitely IO bound.  Even with the parallelism provided by the threads,
+            each thread is trying to read its own database file, line by line, which
+            generates a lot of contention for the memory bus in the system.  In the
+            single-threaded version, this problem doesn't exist because one line of 
+            one file is processed at a time.  
+            
+            Thus, we concluded that it's impractical
+            to load the entire database once to search for a single query.  This lead
+            us to our second approach to test our implementation: loading the entire
+            database once, and then servicing a series of query requests.
           </div>
         </div>
       </div>
