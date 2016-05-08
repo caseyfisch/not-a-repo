@@ -55,8 +55,144 @@
           </div>
         </div>
       </div>
+    <hr />
     </div>
     
+    <div class="container">
+      <div id="summary" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Project Summary</h4>
+            <p>Kazam is a twist on the implementation of Shazam's music recognition
+            algorithm.  We implemented a rudimentary and simplified version of the 
+            audio fingerprinting algorithm to uniquely identify input audio files
+            based on the key frequencies that occur throughout the song.  We 
+            optimized our algorithm by modifying the algorithm proposed in the 
+            paper published by one of Shazam's co-founders, as well as eliminating
+            the constraint to process captured audio in real time.  Doing so allowed
+            us to explore how much we could optimize the search process with a 
+            unique audio fingerprinting approach.  We used threads and SIMD 
+            execution to speed up our algorithm, running on our GHC50, and 
+            analyzed performance with a variable number of
+            threads, as well as varying sizes for our database of songs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="background" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Background</h4>
+            <p>Shazam developed a clever algorithm to robustly and efficiently
+            identify captured audio, in real time, by creating an audio fingerprint 
+            of the input audio signal, and comparing that fingerprint with
+            the fingerprints of all the songs that comprise their massive database
+            of music.  The algorithm at a high level is rather simple: it captures
+            a stream of audio signals, converts discrete blocks of signals from
+            the time domain to the frequency domain, finds the most prominent 
+            frequencies that occur during that time frame, and cleverly construct
+            hashcodes to represent where those unique frequencies occur in time.
+            These codes are then simply searched for amongst all the codes for 
+            songs that exist in the database to find the most probable match.  The
+            Shazam algorithm uses this approach to be robust against noise and
+            distortion, as well as to be efficient in the way they compress
+            the audio fingerprint of the original songs.</p>
+            
+            <a href="https://www.toptal.com/algorithms/shazam-it-music-processing-fingerprinting-and-recognition#from-top-to-bottom" target="toptal"><img class="responsive-img center-block" src="images/pipeline.jpg"></a>
+
+            <p>You can see the described algorithm in the pipeline shown in the 
+            figure above.  We decided to adjust the scope of the algorithm, and instead just
+            focus on optimizing the matching of audio WAV files against our own
+            constructed database of songs.  Our algorithm takes as its input 
+            a WAV file, transforms discrete time intervals of the song into
+            the frequency domain, and then constructs a different audio fingerprint 
+            than the audio fingerprint that Shazam uses.  Since we reduced the 
+            scope of the problem to static files and eliminated the real-time 
+            restriction, we eliminated the need to implement metrics to combat
+            noise.  However, this offered us more flexibility in designing
+            our own fingerprinting algorithm.</p>
+            
+            <p>Here are some of the basic details of our implementation:</p>
+            <ol>
+              <li><b>Key data structures and operations:</b><p>For each block of audio, we transform 
+              its frequency data into a histogram to represent the audio fingerprint 
+              for the audio at that point in time.  Normalizing the histogram gives us 
+              something similar to a probability density function, which allows
+              us to efficiently scan over database songs to find matches.</p></li>
+              
+              <li><b>Inputs and outputs:</b><p>There are two phases of the algorithm: 
+              the WAV file transformation and the audio fingerprint match search.
+              </p>
+              
+              <p>
+                Transforming the WAV file takes as input a WAV file and outputs 
+                our unique audio fingerprint for the audio file as a simple text 
+                file.  Searching for an audio fingerprint match takes as input 
+                a database of audio fingerprints and a query audio fingerprint and
+                outputs the song in the database that exhibits the highest percentage
+                of similarity with the query audio fingerprint.
+              </p>
+              </li>
+              <li>
+                <b>Expensive computations</b>: <p>The most computationally expensive
+                phase of the algorithm is searching the database for a match.  Since
+                there are no direct dependencies between checking a query against
+                each individual song in the database, we can easily parallelize
+                over each song in the database.  We can also limit the time spent 
+                in the search by implementing an early break away mechanism if a 
+                particular song exhibits a high level of similarity after a set 
+                minimum time limit.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="approach" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Approach</h4>
+            <p></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="results" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>Results</h4>
+            <p></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="references" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <h4>References</h4>
+            <p></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="work" class="section scrollspy">
+        <div class="row">
+          <div class="col s12 m12">
+            <p>Equal work was performed by both group members.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer class="page-footer blue darken-2">
