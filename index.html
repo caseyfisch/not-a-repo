@@ -197,7 +197,7 @@
             this case).  This implementation featured no break early mechanism,
             so the entirety of each song was scanned and compared.</p>
             
-            <img class="responsive-img center-block" src="./images/svp-compare-query.png"/>
+            <img class="responsive-img center-block" src="./images/svp-query1-1.png"/>
             
             <p>As you can see in the chart, the parallel implementation actually 
             performs marginally worse in all cases than the sequential version.
@@ -209,7 +209,7 @@
             more benefits from the parallelized implementation over the sequential 
             version.  </p>
             
-            <img src=""/>
+            <img class="responsive-img center-block" src="./images/svp-query1.png"/>
             
             However, as the above graph shows, our prediction was incorrect.  We see 
             that as the size of the database grows, the performance of the parallel 
@@ -224,7 +224,20 @@
             Thus, we concluded that it's impractical
             to load the entire database once to search for a single query.  This led
             us to our second approach to test our implementation: loading the entire
-            database once, and then servicing a series of query requests.</p>
+            database once, servicing a series of query requests, and then analzying
+            the amount of time it takes each implementation to find the most similar 
+            song to each query.  The following graph shows the execution time of the 
+            sequential and parallel implementations of the search with a constant set of 10 
+            queries.  We see that the parallel implementation using OpenMP threads 
+            achieves approximately 2x speedup over the serial version as the size
+            of the database increases.</p>
+            
+            <img class="responsive-img center-block" src="./images/svp-query2.png"/>
+            
+            <p>
+              Similarly, we wanted to see how does the parallel implementation scale
+              with a variable number of threads.  
+            </p>
           </div>
         </div>
       </div>
