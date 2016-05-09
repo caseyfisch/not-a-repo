@@ -254,10 +254,10 @@
             implementation.  This result is not surprising, given that the overhead of 
             spawning a single pthread outweighs the benefit of just sequentially searching 
             through the database.  Second, the parallel version doesn't see any performance 
-            gains beyond 6 threads.  The GHC 45 machine has 6 hyper-threaded cores, so 
-            it makes sense that the optimal thread count is 6 (one per core), where as
+            gains beyond six threads.  The GHC 45 machine has six hyper-threaded cores, so 
+            it makes sense that the optimal thread count is six (one thread per core), whereas
             trying to utilize both hyper-threaded execution contexts on each of the cores 
-            results in some scheduling and context switching overhead that limits performance.</p>
+            results in some scheduling and context-switching overhead that limits performance.</p>
             
             <p>As a side note, we would have loved to have tested our implementation on 
             a database with thousands of songs; however, our implementation is only 
