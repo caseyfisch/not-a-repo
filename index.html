@@ -229,15 +229,36 @@
             song to each query.  The following graph shows the execution time of the 
             sequential and parallel implementations of the search with a constant set of 10 
             queries.  We see that the parallel implementation using OpenMP threads 
-            achieves approximately 2x speedup over the serial version as the size
-            of the database increases.</p>
+            achieves approximately 3x speedup over the serial version as the size
+            of the database increases, even with just 100 songs in the database.</p>
             
-            <img class="responsive-img center-block" src="./images/svp-query2.png"/>
+            <img class="responsive-img center-block" src="./images/svp-query2-2.png"/>
             
             <p>
               Similarly, we wanted to see how does the parallel implementation scale
               with a variable number of threads.  
             </p>
+            
+            <img class="responsive-img center-block" src="./images/svp-query3.png"/>
+            
+            <p>We see in the figure above that generally, as we increase the number of 
+            threads spawned by OpenMP, the execution time of the parallel implementation 
+            decreases.  We note two points of interest in the graph.  First, the single-threaded 
+            OpenMP program has a higher execution time than just the single-threaded 
+            implementation.  This result is not surprising, given that the overhead of 
+            spawning a single pthread outweighs the benefit of just sequentially searching 
+            through the database.  Second, the parallel version doesn't see any performance 
+            gains beyond 6 threads.  The GHC 45 machine has 6 hyper-threaded cores, so 
+            it makes sense that the optimal thread count is 6 (one per core), where as
+            trying to utilize both hyper-threaded execution contexts on each of the cores 
+            results in some scheduling and context switching overhead that limits performance.</p>
+            
+            <p>As a side note, we would have loved to have tested our implementation on 
+            a database with thousands of songs; however, our implementation is only 
+            capable of reading .WAV files, so we manually built our database of files 
+            by converting MP3 files to WAV's and running them through our fingerprinting 
+            algorithm.  We didn't come up with an efficient way to generate our database,
+            otherwise we would have scaled to a larger number of songs.  </p>
           </div>
         </div>
       </div>
