@@ -152,7 +152,7 @@
               </p>
               </li>
               <li>
-                <b>Expensive computations</b>: <p>The most computationally expensive
+                <b>Expensive computations:</b> <p>The most computationally expensive
                 phase of the algorithm is searching the database for a match.  Since
                 there are no direct dependencies between checking a query against
                 each individual song in the database, we can easily parallelize
@@ -161,6 +161,24 @@
                 particular song exhibits a high level of similarity after a set 
                 minimum time limit.</p>
               </li>
+              
+              <li><b>Workload & Opportunities for Parallelism:</b> There are virtually 
+              no dependencies in the sequential version of the algorithm.  However, if 
+              we want to implement an early break out mechanism (say, if a thread is 
+              calculating the similarity of a query to its database song, and it sees 
+              that the song exhibits greater than 90% similarity for longer than ten 
+              seconds worth of audio, then we can short circuit the rest of the database 
+              execution), then we introduce some synchronization costs and dependencies 
+              between threads.  <br /><br />
+              Generation of histograms is one part of the algorithm that is greatly 
+              amenable to SIMD execution. For every song, we go over the same process 
+              of dividing it up into time frames of 2048 samples and then perform 
+              the fast fourier transform on them, normalizing them and distributing 
+              them within the bins of the histogram based on the frequency distributions. 
+              The algorithm has minimal divergence, making it perfect for SIMD utilization. 
+              Using SIMD execution, we could perform this sequence of operations on a 
+              bunch of songs together, with each song occupying a lane within the vector, 
+              and each thread working on that array. </li>
             </ol>
           </div>
         </div>
@@ -199,7 +217,16 @@
             
             This seems surprisingly fast, even to perform the FFT's sequentially 
             for all blocks in the song, but we are using an optimized <a href="http://www.fftw.org/" target=blank>FFT  
-            library</a> for performing FFT on relatively small arrays.  
+            library</a> for performing FFT on relatively small arrays.  The focus 
+            of our project wasn't to optimize the FFT, which is why we just used 
+            this black box library.  However, there is still room for improvement 
+            to the generation algorithm.  We essentially have a pipeline that processes
+            blocks of the raw WAV audio data.  The work required to transform each
+            block into the final histogram is completely independent from any other 
+            block, so we can parallelize the process by sending each block of audio 
+            data through the pipeline in parallel.  We wanted to have some benchmarks 
+            for this algorithm, but unfortunately, some nasty seg faults kept us from
+            successfully implementing this optimized approach.
             
             <h5>Performance of Sequential and Parallel Query Matching</h5>
             <p>We optimized the match search of an input audio fingerprint with
