@@ -73,7 +73,7 @@
             the constraint to process captured audio in real time.  Doing so allowed
             us to explore how much we could optimize the search process with a 
             unique audio fingerprinting approach.  We used OpenMP to attempt to 
-            speed up our algorithm, running on our GHC 45, and 
+            speed up our algorithm on GHC Machine 45, and we
             analyzed performance with a variable number of
             threads, as well as varying sizes for our database of songs.</p>
           </div>
@@ -186,7 +186,7 @@
             <p>Here, we present some of the results that each of our optimizations
             provided.</p>
             
-            <h5>Performance of Sequential and Parallel compare_query.cpp</h5>
+            <h5>Performance of Sequential and Parallel Query Matching</h5>
             <p>We optimized the match search of an input audio fingerprint with
             all the fingerprints in our database by parallelizing on the axis of 
             database fingerprints.  We implemented this with OpenMP, and tested
@@ -262,6 +262,9 @@
             by converting MP3 files to WAV's and running them through our fingerprinting 
             algorithm.  We didn't come up with an efficient way to generate our database,
             otherwise we would have scaled to a larger number of songs.  </p>
+            
+            <h5>Performance of Sequential and Parallel Fingerprint Generation</h5>
+
           </div>
         </div>
       </div>
