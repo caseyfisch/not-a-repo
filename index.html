@@ -186,8 +186,20 @@
             <p>Here, we present some of the results that each of our optimizations
             provided.</p>
             
-            <h5>Performance of Sequential and Parallel Fingerprint Generation</h5>
-            <p>In progress...</p>
+            <h5>Performance of Sequential Fingerprint Generation</h5>
+            <p>The serial version of our audio fingerprint generation algorithm 
+            simply processed an input WAV file, read in blocks of the audio data, 
+            performed an FFT on each block, constructed a histogram from the FFT 
+            data, and then finally normalized the histogram.  As the figure 
+            below shows, the sequential version is already fairly efficient: 
+            We can generate the audio fingerprint of a four minute song in about
+            half a second.  </p>
+            
+            <img class="responsive-img center-block" src="./images/s-gen1.png"/>
+            
+            This seems surprisingly fast, even to perform the FFT's sequentially 
+            for all blocks in the song, but we are using an optimized <a href="http://www.fftw.org/" target=blank>FFT  
+            library</a> for performing FFT on relatively small arrays.  
             
             <h5>Performance of Sequential and Parallel Query Matching</h5>
             <p>We optimized the match search of an input audio fingerprint with
@@ -266,6 +278,53 @@
             algorithm.  We didn't come up with an efficient way to generate our database,
             otherwise we would have scaled to a larger number of songs.  </p>
             
+            <p>We also think it would be interesting to see how the choice of 
+            several key parameters affects the runtime and accuracy of our implementations.  
+            For example, we chose a block size of 2048 samples to divide the input WAV file 
+            into on which to perform each FFT.  Due to the nature of Fourier transforms, 
+            decreasing the block size gives us higher-resolution time blocks, but also 
+            gives us lower-resolution estimations of the frequencies that occur.  Conversely, 
+            increasing the block size decreases the time fidelity, but provides greater 
+            accuracy of the frequencies for that chunk of time.  Decreasing or increasing 
+            the block size would affect the memory footprint of our audio fingerprints or 
+            impact the accuracy of the similarity of each query and database comparison.  
+            Another parameter that would be interesting to consider as well is the dimensions 
+            of our histogram.  We determined the bin sizes by setting each bin to a range of 
+            100 Hz, up to 1000 Hz.  Adding more bins would increase the accuracy of similarity
+            matches, but also increase the memory footprint.  Alternatively, changing the 
+            ranges to a logarithmic scale (30 - 40 Hz, 40 - 60 Hz, 60 - 100 Hz, 100 - 180 Hz,
+            180 - 300 Hz, etc) might yield better results, due to the nature of the frequencies.  
+            If we double the frequency f, we obtain the same music note one octave above the 
+            original, so a logarithmic range might better distinguish between 
+            individual frequencies.</p>
+            
+            <h5>Extending Our Implementation</h5>
+            <p>We realized late that a GPU would have been an excellent candidate to perform
+            our database lookups and fingerprint constructions.  But, we didn’t have the time
+            to give it proper consideration because we were initially very focused on 
+            implementing the algorithm on our Raspberry Pi, and then on the Gates 
+            cluster machines.  The algorithm is amenable to both SIMD execution and GPU 
+            execution.  We can divide the database of songs among gangs or thread blocks, 
+            and each worker in the gang or thread in the thread block and be responsible 
+            for computing the similarity of a given database song to the query song.  
+            We could have furthered optimized this approach by storing the query song in 
+            shared thread block memory for the GPU, for example, to take advantage of the 
+            low latency access time of shared memory and further reduce the query match 
+            execution time.  However, with our current database size, we would be no where close to 
+            utilizing the GPU at its peak utilization.  This extension of the algorithm is 
+            best suited for extending to larger databases for lookups.</p>
+            
+            <p>Secondly, we think our implemention could be extended to real time analysis,
+            like we had originally planned, since the amount of time to generate a fingerprint 
+            for an entire song is already so low.  Computing the fingerprint for a short clip of 
+            a song would presumably have low latency, as we see in one of the earlier graphs
+            showing the performance of the fingerprint generation algorithm.  However, 
+            trying to match clips of songs to our database songs would add an additional 
+            challenge of locating where in the database song the query song clip might occur. 
+            This involves scanning over the song to find where the max similarity occurs, 
+            which adds some additional work to our general search algorithm.  One consideration
+            for this would be to parallelize the inter-song search with threads starting at 
+            different points in the audio fingerprint, and searching for a max similarity.</p>
           </div>
         </div>
       </div>
