@@ -190,7 +190,82 @@
         <div class="row">
           <div class="col s12 m12">
             <h4>Approach</h4>
-            <p></p>
+            <p>We originally intended to use a Raspberry Pi with a JTAG to capture 
+            audio in real time, perform the necessary FFT to get the frequency representation, 
+            and execute the remainder of the fingerprinting and search algorithm.  We 
+            were starting from a lab from 18-349, where audio signals were captured, 
+            transformed, and the resulting frequencies were used to help tune a guitar.  
+            However, we came across several limitations using this real-time sampling approach. 
+            We were unable to sample the incoming audio at a rate greater than 4000 samples per 
+            second due to the implemented double buffering sample collection mechanism.   
+            This sample rate did not provide accurate enough samples to create an accurate 
+            representation of the analog audio signals.  For these reasons, we decided to try 
+            a simpler approach, which utilizes a combination of a sound file reading library, 
+            an FFT C library, and C++.</p>
+            
+            
+            
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col s12 m6"><img class="responsive-img center-block" src="./images/gen-af.png"></div>
+            <div class="col s12 m6">
+              <p>To simplify the problem space, we decided to do away with recognizing a song 
+            in real time and just process static WAV files. We created our database of songs 
+            through our own implementation of audio fingerprint generation, which is what we 
+            used for our test cases. We generated this database using the following pipeline: 
+            We cut down each song to time frames of 2048 samples, and for each time frame, 
+            created a normalized histogram. This histogram comprises of 10 bins with frequency 
+            distributions from 0 - 1000 Hz, and the value for each bin is determined by the 
+            magnitude of the frequencies that fall into the bin.  The normalized histograms 
+            represent a pseudo probability density function, indicating the probability of 
+            finding a particular frequency at time step i in the audio fingerprint.  We exported 
+            this information out to textfiles to comprise our database of audio fingerprints.</p>
+              <p>
+              We repeat the same process to compute the audio fingerprint for any query sound file. 
+              To find the query song within this database, we compare the histograms of the query 
+              to those of every song within the database, keeping track of the similarities between 
+              every song and the query.  We compute similarity between two fingerprints in the 
+              following way: we use a metric similar to the way to determine the divergence between 
+              two PDFs.  For each corresponding histogram bin, we accumulate the sum of the minimum 
+              of the two values at each bin.  The closer the two values are, the more of a match 
+              they are for that given time step.  The similarity value will be 1 in the case of a 
+              perfect match, or less than 1 depending on how much of a difference is between the 
+              corresponding bin values.  The similarity is then the accumulated bin sum divided 
+              by the number of time steps we’ve compared.   In the end, the algorithm returns 
+              the song with the highest similarity value.  
+
+            </p>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col s12 m12">
+              <p>To parallelize this approach, we used OpenMP. We parallelized over our search 
+              algorithm, where we compare the query song’s audio fingerprint to every song’s 
+              audio fingerprint within the database. With OpenMP, we assign each thread to 
+              comparing the query song with one song from the database at a time, but we use 
+              a static schedule to let OpenMP handle the work assignment.  There are no 
+              dependencies within this approach, as the comparison of each song within 
+              the database is independent of the other songs. Initially, however, our 
+              implementation was extremely I/O bound. We were streaming in information 
+              from the text files for both the query song and the songs in the database 
+              which made our program I/O bound, resulting in no speedup. This guided us 
+              to approach the algorithm a bit differently. Our final approach loads the 
+              information from the text files of the songs in the database into the memory 
+              of the program each time it is run, allowing us to avoid the I/O overhead 
+              during the search. 
+              </p>
+              
+              <p>
+                
+                We used the Gates machine GHC 45 to test the performance of our algorithm. 
+                Since OpenMP essentially spawns threads for each instance of the for-loop 
+                iteration for searching through the database, GHC 45 provided the best platform 
+                for it.  Note that GHC 45 is a machine with six hyper-threaded cores.
+
+              </p>
           </div>
         </div>
       </div>
